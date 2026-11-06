@@ -1,0 +1,28 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: sonido_vivo
+      MYSQL_USER: sonidovivo
+      MYSQL_PASSWORD: sonidovivo
+      MYSQL_ROOT_PASSWORD: root
+    ports: ["3306:3306"]
+    volumes: ["mysql_data:/var/lib/mysql"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  backend:
+    build: .
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/sonido_vivo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago
+      DB_USERNAME: sonidovivo
+      DB_PASSWORD: sonidovivo
+      JWT_SECRET: cambie-esta-clave-por-una-secreta-de-al-menos-32-caracteres
+    ports: ["8080:8080"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+volumes:
+  mysql_data:

@@ -1,0 +1,7 @@
+package cl.sonidovivo;
+import org.springframework.data.domain.*; import org.springframework.data.jpa.repository.*; import org.springframework.data.repository.query.Param; import java.util.*;
+interface UsuarioRepository extends JpaRepository<Usuario,Long>{ Optional<Usuario> findByEmailIgnoreCase(String email); boolean existsByEmailIgnoreCase(String email); }
+interface ProductoRepository extends JpaRepository<Producto,Long>{ boolean existsByCodigoIgnoreCase(String codigo); @Query("select p from Producto p where (:busqueda is null or lower(p.nombre) like lower(concat('%',:busqueda,'%')) or lower(p.codigo) like lower(concat('%',:busqueda,'%')) or lower(p.marca) like lower(concat('%',:busqueda,'%'))) and (:categoria is null or lower(p.categoria)=lower(:categoria)) and (:stock is null or (:stock='disponible' and p.stock>0) or (:stock='agotado' and p.stock=0))") Page<Producto> buscar(@Param("busqueda") String busqueda,@Param("categoria") String categoria,@Param("stock") String stock,Pageable pageable); }
+interface PedidoRepository extends JpaRepository<Pedido,Long>{ List<Pedido> findByClienteIdOrderByFechaPedidoDesc(Long clienteId); }
+interface MensajeContactoRepository extends JpaRepository<MensajeContacto,Long>{}
+interface SolicitudReparacionRepository extends JpaRepository<SolicitudReparacion,Long>{}
