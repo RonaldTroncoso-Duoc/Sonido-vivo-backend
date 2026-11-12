@@ -13,6 +13,8 @@ record ItemPedidoResponse(Long id,Long productoId,String codigoProducto,String n
 record HistorialResponse(EstadoPedido estado,Instant fecha){}
 record PedidoResponse(Long id,String codigoPedido,UsuarioResponse cliente,EstadoPedido estado,BigDecimal total,Instant fechaPedido,Instant fechaActualizacion,List<ItemPedidoResponse> items,List<HistorialResponse> historial){}
 record CambioEstadoRequest(@NotNull EstadoPedido estado){}
+record SeguimientoPedidoRequest(@NotBlank String codigoPedido,@Email @NotBlank String correo){}
 record ContactoRequest(@NotBlank @Size(min=3) String nombre,@Email @NotBlank String correo,@NotBlank @Size(min=5,max=3000) String mensaje){}
 record ReparacionRequest(@NotBlank String nombre,@Email @NotBlank String correo,@NotBlank String telefono,@NotBlank String tipoInstrumento,String marcaModelo,@NotBlank String servicio,@NotBlank @Size(min=5,max=3000) String descripcion,String entrega){}
 record MensajeResponse(Long id,String tipo,String nombre,String correo,String telefono,String tipoInstrumento,String marcaModelo,String servicio,String descripcion,String entrega,String mensaje,Instant fecha,String respuesta,Instant fechaRespuesta,String estado){}
+record RespuestaMensajeRequest(@NotBlank @Size(min=5,max=3000) String respuesta){}
