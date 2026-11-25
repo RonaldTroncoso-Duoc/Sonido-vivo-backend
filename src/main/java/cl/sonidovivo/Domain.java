@@ -27,7 +27,7 @@ enum EstadoPedido { Confirmado, Preparacion, Despacho, Entregado }
 @Entity @Table(name="pedidos") class Pedido {
   @Id @GeneratedValue(strategy=GenerationType.IDENTITY) Long id; @Column(nullable=false,unique=true) String codigoPedido;
   @ManyToOne(optional=false,fetch=FetchType.LAZY) Usuario cliente; @Enumerated(EnumType.STRING) @Column(nullable=false) EstadoPedido estado=EstadoPedido.Confirmado;
-  @Column(nullable=false,precision=14,scale=2) BigDecimal total; @Column(nullable=false) Instant fechaPedido=Instant.now(); @Column(nullable=false) Instant fechaActualizacion=Instant.now();
+  @Column(nullable=false,precision=14,scale=2) BigDecimal total; String entregaNombre; String entregaCorreo; String entregaDireccion; String entregaComuna; @Column(nullable=false) Instant fechaPedido=Instant.now(); @Column(nullable=false) Instant fechaActualizacion=Instant.now();
   @OneToMany(mappedBy="pedido",cascade=CascadeType.ALL,orphanRemoval=true) List<ItemPedido> items=new ArrayList<>();
   @OneToMany(mappedBy="pedido",cascade=CascadeType.ALL,orphanRemoval=true) @OrderBy("fecha ASC") List<HistorialEstado> historial=new ArrayList<>(); protected Pedido(){}
 }

@@ -2,6 +2,7 @@ package cl.sonidovivo;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -14,13 +15,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = ProductoController.class)
+@WebMvcTest(controllers = {ProductoController.class, MensajeController.class})
 @Import({SecurityConfig.class, JwtAuthenticationFilter.class})
 class SecurityFlowTest {
   @Autowired MockMvc mvc;
   @MockBean JwtService jwt;
   @MockBean UsuarioRepository usuarios;
   @MockBean ProductoService productos;
+  @MockBean MensajeService mensajes;
 
   private final String producto = "{\"codigo\":\"GA999\",\"nombre\":\"Guitarra prueba\",\"categoria\":\"Cuerdas\",\"precio\":1000,\"stock\":2,\"oferta\":false}";
 
@@ -43,5 +45,14 @@ class SecurityFlowTest {
     autenticar("token-admin", Rol.ADMIN);
     when(productos.crear(any())).thenReturn(new ProductoResponse(1L, "GA999", "Guitarra prueba", "Cuerdas", null, null, null, java.math.BigDecimal.valueOf(1000), 2, null, false, java.time.Instant.now()));
     mvc.perform(post("/api/productos").header("Authorization", "Bearer token-admin").contentType(MediaType.APPLICATION_JSON).content(producto)).andExpect(status().isCreated());
+  }
+
+  @Test void mensajesPropiosConClienteEs200() throws Exception {
+    autenticar("token-cliente", Rol.CLIENTE);
+    mvc.perform(get("/api/mensajes/mios").header("Authorization", "Bearer token-cliente")).andExpect(status().isOk());
+  }
+
+  @Test void mensajesPropiosSinTokenEs401() throws Exception {
+    mvc.perform(get("/api/mensajes/mios")).andExpect(status().isUnauthorized());
   }
 }

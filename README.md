@@ -33,7 +33,7 @@ Registro (`POST /auth/register`, `201`):
 
 Crear pedido (`POST /api/pedidos`, JWT CLIENTE, `201`):
 ```json
-{"items":[{"productoId":1,"cantidad":2}]}
+{"items":[{"productoId":1,"cantidad":2}],"entrega":{"nombre":"Ana Música","correo":"ana@correo.cl","direccion":"Calle 1 #234","comuna":"Viña del Mar"}}
 ```
 
 Cambio de estado (`PUT /api/pedidos/{id}/estado`, JWT ADMIN/VENDEDOR):
