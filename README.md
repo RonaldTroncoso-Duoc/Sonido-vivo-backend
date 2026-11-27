@@ -2,13 +2,45 @@
 
 API REST con Spring Boot 3, Java 21, MySQL 8, JWT, BCrypt y Swagger.
 
-## Levantar localmente
+## Ejecución integrada con el frontend
 
-1. Inicia MySQL con `docker compose up -d mysql`.
-2. Compila y ejecuta: `./mvnw.cmd clean package` y `./mvnw.cmd spring-boot:run`.
-3. Abre Swagger en `http://localhost:8080/swagger-ui.html`; OpenAPI está en `http://localhost:8080/v3/api-docs`.
+El procedimiento completo está documentado en `A:\Escritorio\proyecto sonido vivo\GUIA_EJECUCION.md`. La opción recomendada ejecuta MySQL con Docker y deja backend y frontend en local.
 
-La conexión local usa `sonidovivo` / `sonidovivo` y crea la base `sonido_vivo` si es necesario. Configura `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `JWT_SECRET` para otros entornos. Para Docker completo, primero ejecuta `./mvnw.cmd clean package` y luego `docker compose up --build`.
+**Requisitos:** Docker Desktop iniciado, Java 21 o superior, Node.js y los puertos `3306`, `8080` y `5173` disponibles.
+
+Abre tres terminales de PowerShell:
+
+```powershell
+# Terminal 1 — MySQL
+cd "A:\Escritorio\proyecto sonido vivo\Proyecto_sonido_vivo_backend"
+docker compose up -d mysql
+docker compose ps
+
+# Terminal 2 — Backend
+cd "A:\Escritorio\proyecto sonido vivo\Proyecto_sonido_vivo_backend"
+.\mvnw.cmd spring-boot:run
+
+# Terminal 3 — Frontend
+cd "A:\Escritorio\proyecto sonido vivo\Proyecto_Sonido_vivo_frontend"
+npm install
+npm run dev
+```
+
+Espera a que MySQL esté en estado `healthy` o `running`. Después abre el frontend en `http://localhost:5173`, Swagger en `http://localhost:8080/swagger-ui.html` u OpenAPI en `http://localhost:8080/v3/api-docs`.
+
+La conexión local usa `sonidovivo` / `sonidovivo` y crea la base `sonido_vivo` si es necesario. Configura `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `JWT_SECRET` para otros entornos.
+
+### Alternativa: backend y MySQL con Docker
+
+Usa esta opción en lugar de iniciar el backend con Maven; el frontend se mantiene local con `npm run dev`.
+
+```powershell
+cd "A:\Escritorio\proyecto sonido vivo\Proyecto_sonido_vivo_backend"
+.\mvnw.cmd clean package
+docker compose up --build
+```
+
+Para detener backend y frontend usa `Ctrl + C`. Para apagar MySQL conservando los datos, ejecuta `docker compose down`; utiliza `docker compose down -v` solo si también quieres eliminar los datos de la base.
 
 ## Usuarios iniciales
 
