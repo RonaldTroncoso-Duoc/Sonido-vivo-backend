@@ -2,45 +2,77 @@
 
 API REST con Spring Boot 3, Java 21, MySQL 8, JWT, BCrypt y Swagger.
 
-## Ejecución integrada con el frontend
+## Ejecución local
 
-El procedimiento completo está documentado en `A:\Escritorio\proyecto sonido vivo\GUIA_EJECUCION.md`. La opción recomendada ejecuta MySQL con Docker y deja backend y frontend en local.
+### Requisitos
 
-**Requisitos:** Docker Desktop iniciado, Java 21 o superior, Node.js y los puertos `3306`, `8080` y `5173` disponibles.
+- Java 21 o superior.
+- Docker Desktop iniciado para ejecutar MySQL.
+- Puerto `3306` disponible para MySQL y puerto `8080` disponible para la API.
 
-Abre tres terminales de PowerShell:
+### Opción recomendada: MySQL en Docker y backend local
+
+Desde la raíz de este repositorio, abre dos terminales de PowerShell.
+
+**Terminal 1 — MySQL**
 
 ```powershell
-# Terminal 1 — MySQL
-cd "A:\Escritorio\proyecto sonido vivo\Proyecto_sonido_vivo_backend"
 docker compose up -d mysql
 docker compose ps
-
-# Terminal 2 — Backend
-cd "A:\Escritorio\proyecto sonido vivo\Proyecto_sonido_vivo_backend"
-.\mvnw.cmd spring-boot:run
-
-# Terminal 3 — Frontend
-cd "A:\Escritorio\proyecto sonido vivo\Proyecto_Sonido_vivo_frontend"
-npm install
-npm run dev
 ```
 
-Espera a que MySQL esté en estado `healthy` o `running`. Después abre el frontend en `http://localhost:5173`, Swagger en `http://localhost:8080/swagger-ui.html` u OpenAPI en `http://localhost:8080/v3/api-docs`.
+Espera a que el servicio `mysql` figure como `healthy` o `running`.
 
-La conexión local usa `sonidovivo` / `sonidovivo` y crea la base `sonido_vivo` si es necesario. Configura `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `JWT_SECRET` para otros entornos.
-
-### Alternativa: backend y MySQL con Docker
-
-Usa esta opción en lugar de iniciar el backend con Maven; el frontend se mantiene local con `npm run dev`.
+**Terminal 2 — API Spring Boot**
 
 ```powershell
-cd "A:\Escritorio\proyecto sonido vivo\Proyecto_sonido_vivo_backend"
+.\mvnw.cmd spring-boot:run
+```
+
+La API queda disponible en `http://localhost:8080`. Swagger está disponible en `http://localhost:8080/swagger-ui.html` y el documento OpenAPI en `http://localhost:8080/v3/api-docs`.
+
+Para usar la interfaz React, inicia el repositorio del frontend por separado siguiendo sus propias instrucciones; por defecto debe ejecutarse en `http://localhost:5173`.
+
+### Configuración local
+
+La aplicación crea la base `sonido_vivo` si no existe y utiliza estos valores locales predeterminados:
+
+| Variable | Valor local predeterminado |
+| --- | --- |
+| `DB_URL` | `jdbc:mysql://localhost:3306/sonido_vivo?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago` |
+| `DB_USERNAME` | `sonidovivo` |
+| `DB_PASSWORD` | `sonidovivo` |
+| `JWT_SECRET` | Clave de desarrollo incluida en la configuración local |
+
+Para otros entornos, define `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `JWT_SECRET` como variables de entorno. No uses las credenciales o la clave de desarrollo en producción.
+
+### Alternativa: API y MySQL con Docker
+
+Esta alternativa reemplaza el inicio local de Spring Boot. Primero genera el JAR y luego levanta ambos servicios:
+
+```powershell
 .\mvnw.cmd clean package
 docker compose up --build
 ```
 
-Para detener backend y frontend usa `Ctrl + C`. Para apagar MySQL conservando los datos, ejecuta `docker compose down`; utiliza `docker compose down -v` solo si también quieres eliminar los datos de la base.
+La API seguirá disponible en `http://localhost:8080`. El frontend puede mantenerse localmente y debe configurarse para consumir esa URL.
+
+### Detener servicios
+
+- Detén la API local con `Ctrl + C`.
+- Detén los contenedores y conserva los datos con:
+
+  ```powershell
+  docker compose down
+  ```
+
+- Para eliminar también el volumen de MySQL y comenzar desde cero, usa `docker compose down -v`.
+
+### Validación
+
+```powershell
+.\mvnw.cmd test
+```
 
 ## Usuarios iniciales
 
